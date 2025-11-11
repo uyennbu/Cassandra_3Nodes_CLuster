@@ -1,0 +1,119 @@
+version: "3.3"
+
+networks:
+  cassandra-net:
+    driver: bridge
+
+services:
+
+  cassandra-1:
+    image: "cassandra:latest"
+    container_name: "cassandra-1"
+    ports:
+      - "7000:7000"
+      - "9042:9042"
+    networks:
+      - cassandra-net
+    environment:
+      - CASSANDRA_START_RPC=true
+      - CASSANDRA_RPC_ADDRESS=0.0.0.0
+      - CASSANDRA_LISTEN_ADDRESS=auto
+      - CASSANDRA_CLUSTER_NAME=my-cluster
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_DC=my-datacenter-1
+      # Giới hạn heap JVM để tiết kiệm RAM
+      - MAX_HEAP_SIZE=1G
+      - HEAP_NEWSIZE=200M
+    volumes:
+      - cassandra-node-1:/var/lib/cassandra:rw
+    restart: on-failure
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'nodetool status >/dev/null 2>&1 || exit 1'"]
+      interval: 2m
+      start_period: 2m
+      timeout: 10s
+      retries: 3
+    # Giới hạn RAM cho container (docker-compose local sẽ tôn trọng)
+    mem_limit: "2g"
+    memswap_limit: "3g"
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+
+  cassandra-2:
+    image: "cassandra:latest"
+    container_name: "cassandra-2"
+    ports:
+      - "9043:9042"
+    networks:
+      - cassandra-net
+    environment:
+      - CASSANDRA_START_RPC=true
+      - CASSANDRA_RPC_ADDRESS=0.0.0.0
+      - CASSANDRA_LISTEN_ADDRESS=auto
+      - CASSANDRA_CLUSTER_NAME=my-cluster
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_DC=my-datacenter-1
+      - CASSANDRA_SEEDS=cassandra-1
+      - MAX_HEAP_SIZE=1G
+      - HEAP_NEWSIZE=200M
+    depends_on:
+      cassandra-1:
+        condition: service_healthy
+    volumes:
+      - cassandra-node-2:/var/lib/cassandra:rw
+    restart: on-failure
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'nodetool status >/dev/null 2>&1 || exit 1'"]
+      interval: 2m
+      start_period: 2m
+      timeout: 10s
+      retries: 3
+    mem_limit: "2g"
+    memswap_limit: "3g"
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+
+  cassandra-3:
+    image: "cassandra:latest"
+    container_name: "cassandra-3"
+    ports:
+      - "9044:9042"
+    networks:
+      - cassandra-net
+    environment:
+      - CASSANDRA_START_RPC=true
+      - CASSANDRA_RPC_ADDRESS=0.0.0.0
+      - CASSANDRA_LISTEN_ADDRESS=auto
+      - CASSANDRA_CLUSTER_NAME=my-cluster
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_DC=my-datacenter-1
+      - CASSANDRA_SEEDS=cassandra-1
+      - MAX_HEAP_SIZE=1G
+      - HEAP_NEWSIZE=200M
+    depends_on:
+      cassandra-2:
+        condition: service_healthy
+    volumes:
+      - cassandra-node-3:/var/lib/cassandra:rw
+    restart: on-failure
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'nodetool status >/dev/null 2>&1 || exit 1'"]
+      interval: 2m
+      start_period: 2m
+      timeout: 10s
+      retries: 3
+    mem_limit: "2g"
+    memswap_limit: "3g"
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+
+volumes:
+  cassandra-node-1:
+  cassandra-node-2:
+  cassandra-node-3:
