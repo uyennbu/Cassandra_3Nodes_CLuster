@@ -34,9 +34,13 @@ CREATE TABLE IF NOT EXISTS cycling_contest.staffs (
     phone text
 );
 -- insert new data into table
-INSERT INTO cycling_contest.staffs (id, firstname, lastname, phone) VALUES (1, 'Fabiola', 'Jackson', '(831) 555-5554');
-INSERT INTO cycling_contest.staffs (id, firstname, lastname, phone) VALUES (1, 'Mireya', 'Copeland', '(831) 505-2355');
 INSERT INTO cycling_contest.staffs (id, firstname, lastname, phone) VALUES (1, 'Jannette', 'David', '(516) 379-4444');
+INSERT INTO cycling_contest.staffs (id, firstname, lastname, phone) VALUES (2, 'Fabiola', 'Jackson', '(831) 555-5554');
+INSERT INTO cycling_contest.staffs (id, firstname, lastname, phone) VALUES (3, 'Mireya', 'Copeland', '(831) 505-2355');
 -- select data from table
 SELECT * FROM cycling_contest.staffs;
+
+-- CONSISTENCY LEVEL
+CONSISTENCY; -- Kiểm tra mức dộ nhất quán hiện tại
+CONSISTENCY <level>; -- Thay đổi mức độ nhất quán, ví dụ CONSISTENCY TWO
 

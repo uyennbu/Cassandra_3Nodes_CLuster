@@ -17,10 +17,13 @@ services:
     environment:
       - CASSANDRA_START_RPC=true
       - CASSANDRA_RPC_ADDRESS=0.0.0.0
+      - CASSANDRA_BROADCAST_ADDRESS=cassandra-1
+      - CASSANDRA_BROADCAST_RPC_ADDRESS=cassandra-1
       - CASSANDRA_LISTEN_ADDRESS=auto
       - CASSANDRA_CLUSTER_NAME=my-cluster
       - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
       - CASSANDRA_DC=my-datacenter-1
+      - CASSANDRA_SEEDS=cassandra-1,cassandra-2,cassandra-3
       # Giới hạn heap JVM để tiết kiệm RAM
       - MAX_HEAP_SIZE=1G
       - HEAP_NEWSIZE=200M
@@ -51,16 +54,18 @@ services:
     environment:
       - CASSANDRA_START_RPC=true
       - CASSANDRA_RPC_ADDRESS=0.0.0.0
+      - CASSANDRA_BROADCAST_ADDRESS=cassandra-2
+      - CASSANDRA_BROADCAST_RPC_ADDRESS=cassandra-2
       - CASSANDRA_LISTEN_ADDRESS=auto
       - CASSANDRA_CLUSTER_NAME=my-cluster
       - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
       - CASSANDRA_DC=my-datacenter-1
-      - CASSANDRA_SEEDS=cassandra-1
+      - CASSANDRA_SEEDS=cassandra-1,cassandra-2,cassandra-3
       - MAX_HEAP_SIZE=1G
       - HEAP_NEWSIZE=200M
-    depends_on:
-      cassandra-1:
-        condition: service_healthy
+    # depends_on:
+    #   cassandra-1:
+    #     condition: service_healthy
     volumes:
       - cassandra-node-2:/var/lib/cassandra:rw
     restart: on-failure
@@ -88,15 +93,17 @@ services:
       - CASSANDRA_START_RPC=true
       - CASSANDRA_RPC_ADDRESS=0.0.0.0
       - CASSANDRA_LISTEN_ADDRESS=auto
+      - CASSANDRA_BROADCAST_ADDRESS=cassandra-3
+      - CASSANDRA_BROADCAST_RPC_ADDRESS=cassandra-3
       - CASSANDRA_CLUSTER_NAME=my-cluster
       - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
       - CASSANDRA_DC=my-datacenter-1
-      - CASSANDRA_SEEDS=cassandra-1
+      - CASSANDRA_SEEDS=cassandra-1,cassandra-2,cassandra-3
       - MAX_HEAP_SIZE=1G
       - HEAP_NEWSIZE=200M
-    depends_on:
-      cassandra-2:
-        condition: service_healthy
+    # depends_on:
+    #   cassandra-2:
+    #     condition: service_healthy
     volumes:
       - cassandra-node-3:/var/lib/cassandra:rw
     restart: on-failure
